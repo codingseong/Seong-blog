@@ -29,17 +29,16 @@ gravatar = Gravatar(app,
                     use_ssl=False,
                     base_url=None)
 
-##CONNECT TO DB
-
-db = SQLAlchemy(app)
 
 
 
 ##CONFIGURE TABLES
 
 # connect to database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL")
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL", "sqlite:///blog.db")
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
 
 
 class User(db.Model, UserMixin):
@@ -55,8 +54,8 @@ class User(db.Model, UserMixin):
     comments = relationship("Comment", back_populates="comment_author")
 
 # db.create_all()
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
+# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 class BlogPost(db.Model):
     __tablename__ = "blog_posts"
@@ -75,7 +74,7 @@ class BlogPost(db.Model):
     comments = relationship("Comment", back_populates="parent_post")
 # db.create_all()
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///comment.db'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///comment.db'
 class Comment(db.Model):
     __tablename__ = "comments"
     id = db.Column(db.Integer, primary_key=True)
