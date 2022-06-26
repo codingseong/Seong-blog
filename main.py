@@ -40,6 +40,12 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL", "sqlite:/
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 class User(db.Model, UserMixin):
     __tablename__ = "users"
@@ -55,7 +61,7 @@ class User(db.Model, UserMixin):
 
 # db.create_all()
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
-# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 
 class BlogPost(db.Model):
     __tablename__ = "blog_posts"
@@ -138,12 +144,7 @@ def register():
     return render_template("register.html", form=form, current_user=current_user)
 
 
-login_manager = LoginManager()
-login_manager.init_app(app)
 
-@login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(int(user_id))
 
 @app.route('/login', methods=["GET", "POST"])
 def login():
